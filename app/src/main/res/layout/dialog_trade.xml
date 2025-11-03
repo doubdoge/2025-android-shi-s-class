@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_marginBottom="15dp"/>
+
+    <!-- 关键修复：将 inputType 从 numberPositive 改为 number -->
+    <EditText
+        android:id="@+id/et_quantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入数量"
+        android:inputType="number"
+        android:maxLines="1"/>
+
+</LinearLayout>
