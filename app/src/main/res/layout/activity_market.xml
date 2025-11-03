@@ -2,51 +2,83 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:padding="8dp">
+    android:orientation="vertical"
+    android:padding="16dp">
 
+    <!-- 顶部余额显示区域（修复 layout_marginBottom） -->
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_marginRight="4dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:layout_marginBottom="16dp"> <!-- 关键修复：marginBottom → layout_marginBottom -->
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/tv_haf_label"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="市场交易中心"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:padding="10dp"
-            android:background="#e0e0e0"/>
+            android:text="当前哈夫币："
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-        <ListView
-            android:id="@+id/lv_market"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        <TextView
+            android:id="@+id/tv_haf_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1000.0k"
+            android:textColor="#00AA00"
+            android:textSize="16sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
+    <!-- 市场列表和仓库列表（无其他错误） -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_marginLeft="4dp">
+        android:orientation="horizontal"
+        android:weightSum="2">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="我的仓库"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:padding="10dp"
-            android:background="#e0e0e0"/>
+        <!-- 市场列表 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingRight="8dp">
 
-        <ListView
-            android:id="@+id/lv_warehouse"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="市场商品"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ListView
+                android:id="@+id/lv_market"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <!-- 仓库列表 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingLeft="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="我的仓库"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ListView
+                android:id="@+id/lv_warehouse"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

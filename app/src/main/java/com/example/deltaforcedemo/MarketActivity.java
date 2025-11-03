@@ -9,11 +9,13 @@ import android.os.Message;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -26,6 +28,8 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
     private WarehouseManager warehouseManager;
     private Timer priceTimer;
     private MyHandler myHandler;
+    private TextView hafBalanceTv; // 哈夫币余额显示
+    private HafCurrencyManager currencyManager; // 货币管理器
 
     private static class MyHandler extends Handler {
         private final WeakReference<MarketActivity> activityRef;
@@ -54,11 +58,13 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_market);
 
-        // 强制横屏
-        setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        // 初始化货币管理器和余额显示
+        currencyManager = HafCurrencyManager.getInstance();
+        hafBalanceTv = findViewById(R.id.tv_haf_balance);
+        updateHafBalanceDisplay(); // 初始显示
 
-        myHandler = new MyHandler(this);
         warehouseManager = WarehouseManager.getInstance();
+        myHandler = new MyHandler(this);
 
         initMarketData();
 
@@ -73,6 +79,11 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
         warehouseListView.setAdapter(warehouseAdapter);
 
         startPriceTimer();
+    }
+
+    // 更新哈夫币显示
+    private void updateHafBalanceDisplay() {
+        hafBalanceTv.setText(currencyManager.formatBalance());
     }
 
     private void initMarketData() {
@@ -124,21 +135,41 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
                 int quantity;
                 try {
                     quantity = Integer.parseInt(input);
+                    if (quantity <= 0) {
+                        showToast("数量必须大于0");
+                        return;
+                    }
                 } catch (NumberFormatException e) {
                     showToast("请输入有效数字");
                     return;
                 }
 
+                // 计算交易金额（单价 * 数量）
+                BigDecimal amount = item.getPrice().multiply(new BigDecimal(quantity));
+
                 boolean success;
                 if (isBuy) {
-                    success = warehouseManager.buyItem(MarketActivity.this, item, quantity);
+                    // 购买：先检查余额是否足够
+                    if (currencyManager.getBalance().compareTo(amount) < 0) {
+                        showToast("哈夫币不足，无法购买");
+                        return;
+                    }
+                    // 扣减货币并执行购买
+                    success = currencyManager.deductBalance(amount)
+                            && warehouseManager.buyItem(MarketActivity.this, item, quantity);
                 } else {
+                    // 出售：增加货币
                     success = warehouseManager.sellItem(MarketActivity.this, item, quantity);
+                    if (success) {
+                        currencyManager.addBalance(amount); // 出售成功后增加余额
+                    }
                 }
 
                 if (success) {
                     marketAdapter.notifyDataSetChanged();
                     warehouseAdapter.updateData(warehouseManager.getWarehouseItems());
+                    updateHafBalanceDisplay(); // 交易后更新余额显示
+                    showToast(isBuy ? "购买成功" : "出售成功");
                 }
             }
         });
