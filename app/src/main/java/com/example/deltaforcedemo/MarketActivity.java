@@ -2,6 +2,7 @@ package com.example.deltaforcedemo;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,9 +12,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,22 +27,20 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
     private WarehouseManager warehouseManager;
     private Timer priceTimer;
     private MyHandler myHandler;
-    private TextView hafBalanceTv; // 哈夫币余额显示
-    private HafCurrencyManager currencyManager; // 货币管理器
+    private TextView hafBalanceTv;
+    private HafCurrencyManager currencyManager;
+    private String currentUsername;
 
     private static class MyHandler extends Handler {
         private final WeakReference<MarketActivity> activityRef;
-
         public MyHandler(MarketActivity activity) {
             super(Looper.getMainLooper());
             activityRef = new WeakReference<>(activity);
         }
-
         @Override
         public void handleMessage(Message msg) {
             MarketActivity activity = activityRef.get();
             if (activity == null) return;
-
             if (msg.what == 1) {
                 for (MarketItem item : activity.marketItems) {
                     item.fluctuatePrice();
@@ -58,30 +55,36 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_market);
 
-        // 初始化货币管理器和余额显示
+        // 1. 先校验登录状态（未登录直接跳转）
         currencyManager = HafCurrencyManager.getInstance();
+        try {
+            currentUsername = currencyManager.getCurrentUsername();
+        } catch (RuntimeException e) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
+        // 2. 初始化仓库（绑定当前用户）
+        warehouseManager = WarehouseManager.getInstance(this, currentUsername);
+
+        // 3. 初始化UI（加载已保存的货币余额）
         hafBalanceTv = findViewById(R.id.tv_haf_balance);
-        updateHafBalanceDisplay(); // 初始显示
+        updateHafBalanceDisplay();
 
-        warehouseManager = WarehouseManager.getInstance();
         myHandler = new MyHandler(this);
-
         initMarketData();
 
-        // 初始化列表
         ListView marketListView = findViewById(R.id.lv_market);
         ListView warehouseListView = findViewById(R.id.lv_warehouse);
-
         marketAdapter = new MarketAdapter(this, marketItems, this);
         warehouseAdapter = new WarehouseAdapter(this, warehouseManager.getWarehouseItems());
-
         marketListView.setAdapter(marketAdapter);
         warehouseListView.setAdapter(warehouseAdapter);
 
         startPriceTimer();
     }
 
-    // 更新哈夫币显示
     private void updateHafBalanceDisplay() {
         hafBalanceTv.setText(currencyManager.formatBalance());
     }
@@ -118,59 +121,50 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_trade, null);
         builder.setView(view);
-
         EditText quantityEt = view.findViewById(R.id.et_quantity);
         String title = isBuy ? "购买 " + item.getName() : "出售 " + item.getName();
         builder.setTitle(title);
 
-        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String input = quantityEt.getText().toString().trim();
-                if (input.isEmpty()) {
-                    showToast("请输入数量");
+        builder.setPositiveButton("确认", (dialog, which) -> {
+            String input = quantityEt.getText().toString().trim();
+            if (input.isEmpty()) {
+                showToast("请输入数量");
+                return;
+            }
+
+            int quantity;
+            try {
+                quantity = Integer.parseInt(input);
+                if (quantity <= 0) {
+                    showToast("数量必须大于0");
                     return;
                 }
+            } catch (NumberFormatException e) {
+                showToast("请输入有效数字");
+                return;
+            }
 
-                int quantity;
-                try {
-                    quantity = Integer.parseInt(input);
-                    if (quantity <= 0) {
-                        showToast("数量必须大于0");
-                        return;
-                    }
-                } catch (NumberFormatException e) {
-                    showToast("请输入有效数字");
+            BigDecimal amount = item.getCurrentPrice().multiply(new BigDecimal(quantity));
+            boolean success;
+
+            if (isBuy) {
+                if (currencyManager.getBalance().compareTo(amount) < 0) {
+                    showToast("哈夫币不足");
                     return;
                 }
-
-                // 计算交易金额（单价 * 数量）
-                BigDecimal amount = item.getPrice().multiply(new BigDecimal(quantity));
-
-                boolean success;
-                if (isBuy) {
-                    // 购买：先检查余额是否足够
-                    if (currencyManager.getBalance().compareTo(amount) < 0) {
-                        showToast("哈夫币不足，无法购买");
-                        return;
-                    }
-                    // 扣减货币并执行购买
-                    success = currencyManager.deductBalance(amount)
-                            && warehouseManager.buyItem(MarketActivity.this, item, quantity);
-                } else {
-                    // 出售：增加货币
-                    success = warehouseManager.sellItem(MarketActivity.this, item, quantity);
-                    if (success) {
-                        currencyManager.addBalance(amount); // 出售成功后增加余额
-                    }
-                }
-
+                success = currencyManager.deductBalance(amount) && warehouseManager.buyItem(item, quantity);
+            } else {
+                success = warehouseManager.sellItem(item, quantity);
                 if (success) {
-                    marketAdapter.notifyDataSetChanged();
-                    warehouseAdapter.updateData(warehouseManager.getWarehouseItems());
-                    updateHafBalanceDisplay(); // 交易后更新余额显示
-                    showToast(isBuy ? "购买成功" : "出售成功");
+                    currencyManager.addBalance(amount);
                 }
+            }
+
+            if (success) {
+                marketAdapter.notifyDataSetChanged();
+                warehouseAdapter.updateData(warehouseManager.getWarehouseItems());
+                updateHafBalanceDisplay();
+                showToast(isBuy ? "购买成功" : "出售成功");
             }
         });
 
@@ -185,6 +179,10 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // 关键：退出页面时强制保存货币和仓库数据（双重保障）
+        currencyManager.saveAccountBalance();
+        warehouseManager.saveData(); // 调用仓库的保存方法
+
         if (priceTimer != null) {
             priceTimer.cancel();
             priceTimer.purge();

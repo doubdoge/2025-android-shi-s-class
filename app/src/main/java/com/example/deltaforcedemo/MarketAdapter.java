@@ -1,6 +1,5 @@
 package com.example.deltaforcedemo;
 
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 public class MarketAdapter extends BaseAdapter {
@@ -17,13 +17,11 @@ public class MarketAdapter extends BaseAdapter {
     private final List<MarketItem> marketItems;
     private final OnTradeListener tradeListener;
 
-    // 交易监听器接口（与MarketActivity保持一致）
     public interface OnTradeListener {
         void onBuy(MarketItem item);
         void onSell(MarketItem item);
     }
 
-    // 构造方法（与MarketActivity中初始化参数匹配）
     public MarketAdapter(Context context, List<MarketItem> items, OnTradeListener listener) {
         this.context = context;
         this.marketItems = items;
@@ -65,27 +63,31 @@ public class MarketAdapter extends BaseAdapter {
 
         MarketItem item = marketItems.get(position);
         holder.nameTv.setText(item.getName() + " (" + item.getType() + ")");
-        holder.priceTv.setText("价格: " + item.getPrice() + " 元");
+        holder.priceTv.setText("价格: " + item.getCurrentPrice() + " 元");
+        holder.stockTv.setText("库存: " + item.getTotalSupply());
 
-        // 关键修复：getStock() → getTotalAmount()（与MarketItem类方法名一致）
-        holder.stockTv.setText("库存: " + item.getTotalAmount());
+        // 1. 修正方法名：getchangeRate() → getChangeRate()（大小写错误）
+        // 2. 处理类型：double → BigDecimal（转换后保留2位小数）
+        double changeRate = item.getChangeRate(); // 获取double类型的变化率
+        BigDecimal rateBigDecimal = BigDecimal.valueOf(changeRate)
+                .multiply(BigDecimal.valueOf(100)) // 转为百分比（如0.02 → 2%）
+                .setScale(2, RoundingMode.HALF_UP); // 保留2位小数
 
-        // 涨跌幅处理（已修复BigDecimal导入和setText歧义）
-        BigDecimal changeRate = item.getChangeRate();
-        String changeText = changeRate.doubleValue() >= 0 ?
-                "+" + changeRate.toString() + "%" : changeRate.toString() + "%";
+        // 格式化涨跌幅文本
+        String changeText = rateBigDecimal.doubleValue() >= 0 ?
+                "+" + rateBigDecimal + "%" : rateBigDecimal + "%";
         holder.changeTv.setText(changeText);
 
-        // 涨跌幅颜色
-        if (changeRate.compareTo(BigDecimal.ZERO) > 0) {
+        // 涨跌幅颜色（红涨绿跌）
+        if (rateBigDecimal.compareTo(BigDecimal.ZERO) > 0) {
             holder.changeTv.setTextColor(context.getResources().getColor(android.R.color.holo_red_dark));
-        } else if (changeRate.compareTo(BigDecimal.ZERO) < 0) {
+        } else if (rateBigDecimal.compareTo(BigDecimal.ZERO) < 0) {
             holder.changeTv.setTextColor(context.getResources().getColor(android.R.color.holo_green_dark));
         } else {
             holder.changeTv.setTextColor(context.getResources().getColor(android.R.color.darker_gray));
         }
 
-        // 按钮点击事件（与接口回调匹配）
+        // 按钮点击事件
         holder.buyBtn.setOnClickListener(v -> {
             if (tradeListener != null) {
                 tradeListener.onBuy(item);
@@ -101,7 +103,6 @@ public class MarketAdapter extends BaseAdapter {
         return convertView;
     }
 
-    // ViewHolder内部类
     static class ViewHolder {
         TextView nameTv, priceTv, changeTv, stockTv;
         Button buyBtn, sellBtn;

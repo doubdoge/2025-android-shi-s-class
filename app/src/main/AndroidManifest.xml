@@ -3,6 +3,7 @@
     package="com.example.deltaforcedemo">
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -12,13 +13,20 @@
 
         <!-- 主启动Activity（语法完全正确，标签闭合完整） -->
         <activity
-            android:name=".MarketActivity"
+            android:name=".LoginActivity"
             android:exported="true"
-            android:screenOrientation="landscape"> <!-- 直接在标签内配置横屏，无需代码设置 -->
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <!-- 原主页面 -->
+        <activity
+            android:name=".MarketActivity"
+            android:exported="false"
+            android:screenOrientation="landscape">
         </activity>
 
     </application>

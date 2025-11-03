@@ -1,4 +1,7 @@
 [versions]
+# 新增 Gson 版本（可替换为最新稳定版，如 2.10.1）
+gson = "2.13.2"
+# 保留其他已有版本（agp、junit 等）
 agp = "8.13.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -7,6 +10,9 @@ appcompat = "1.6.1"
 material = "1.10.0"
 
 [libraries]
+# 新增 Gson 库声明
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+# 保留其他已有库（junit、appcompat 等）
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -15,4 +21,3 @@ material = { group = "com.google.android.material", name = "material", version.r
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-

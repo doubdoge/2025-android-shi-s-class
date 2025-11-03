@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:spacing="16dp">
+
+    <!-- 用户名输入框 -->
+    <EditText
+        android:id="@+id/et_reg_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入用户名"
+        android:inputType="text"
+        android:maxLines="1"/>
+
+    <!-- 密码输入框 -->
+    <EditText
+        android:id="@+id/et_reg_pwd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入密码"
+        android:inputType="textPassword"
+        android:maxLines="1"/>
+
+    <!-- 确认密码输入框 -->
+    <EditText
+        android:id="@+id/et_reg_pwd_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请确认密码"
+        android:inputType="textPassword"
+        android:maxLines="1"/>
+
+</LinearLayout>
