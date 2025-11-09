@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MarketActivity extends AppCompatActivity implements MarketAdapter.OnTradeListener {
+public class MarketActivity extends AppCompatActivity implements MarketAdapter.OnTradeListener, WarehouseAdapter.OnSellListener {
     private List<MarketItem> marketItems = new ArrayList<>();
     private MarketAdapter marketAdapter;
     private WarehouseAdapter warehouseAdapter;
@@ -83,7 +83,7 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
         ListView marketListView = findViewById(R.id.lv_market);
         ListView warehouseListView = findViewById(R.id.lv_warehouse);
         marketAdapter = new MarketAdapter(this, marketItems, this);
-        warehouseAdapter = new WarehouseAdapter(this, warehouseManager.getWarehouseItems());
+        warehouseAdapter = new WarehouseAdapter(this, warehouseManager.getWarehouseItems(), marketItems, this);
         marketListView.setAdapter(marketAdapter);
         warehouseListView.setAdapter(warehouseAdapter);
 
@@ -164,21 +164,35 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
 
     @Override
     public void onBuy(MarketItem item) {
-        showTradeDialog(item, true);
+        showTradeDialog(item, true, 0);
     }
 
     @Override
-    public void onSell(MarketItem item) {
-        showTradeDialog(item, false);
+    public void onSell(WarehouseItem warehouseItem, MarketItem marketItem) {
+        showTradeDialog(marketItem, false, warehouseItem.getQuantity());
     }
 
-    private void showTradeDialog(MarketItem item, boolean isBuy) {
+    private void showTradeDialog(MarketItem item, boolean isBuy, int maxQuantity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_trade, null);
         builder.setView(view);
         EditText quantityEt = view.findViewById(R.id.et_quantity);
         String title = isBuy ? "购买 " + item.getName() : "出售 " + item.getName();
         builder.setTitle(title);
+        
+        // 如果是出售，显示最大可出售数量提示
+        TextView titleTv = view.findViewById(R.id.tv_title);
+        if (!isBuy && maxQuantity > 0) {
+            if (titleTv != null) {
+                titleTv.setText("最多可出售: " + maxQuantity);
+                titleTv.setVisibility(View.VISIBLE);
+            }
+        } else {
+            // 购买时隐藏提示
+            if (titleTv != null) {
+                titleTv.setVisibility(View.GONE);
+            }
+        }
 
         builder.setPositiveButton("确认", (dialog, which) -> {
             String input = quantityEt.getText().toString().trim();
@@ -196,6 +210,12 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
                 }
             } catch (NumberFormatException e) {
                 showToast("请输入有效数字");
+                return;
+            }
+
+            // 如果是出售，检查数量不能超过库存
+            if (!isBuy && maxQuantity > 0 && quantity > maxQuantity) {
+                showToast("出售数量不能超过库存数量: " + maxQuantity);
                 return;
             }
 

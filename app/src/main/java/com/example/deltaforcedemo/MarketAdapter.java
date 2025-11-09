@@ -19,7 +19,6 @@ public class MarketAdapter extends BaseAdapter {
 
     public interface OnTradeListener {
         void onBuy(MarketItem item);
-        void onSell(MarketItem item);
     }
 
     public MarketAdapter(Context context, List<MarketItem> items, OnTradeListener listener) {
@@ -55,7 +54,6 @@ public class MarketAdapter extends BaseAdapter {
             holder.changeTv = convertView.findViewById(R.id.tv_change);
             holder.stockTv = convertView.findViewById(R.id.tv_stock);
             holder.buyBtn = convertView.findViewById(R.id.btn_buy);
-            holder.sellBtn = convertView.findViewById(R.id.btn_sell);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -94,17 +92,11 @@ public class MarketAdapter extends BaseAdapter {
             }
         });
 
-        holder.sellBtn.setOnClickListener(v -> {
-            if (tradeListener != null) {
-                tradeListener.onSell(item);
-            }
-        });
-
         return convertView;
     }
 
     static class ViewHolder {
         TextView nameTv, priceTv, changeTv, stockTv;
-        Button buyBtn, sellBtn;
+        Button buyBtn;
     }
 }
