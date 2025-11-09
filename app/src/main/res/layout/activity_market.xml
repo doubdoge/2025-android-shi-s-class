@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="@dimen/padding_large">
 
     <!-- 顶部余额显示区域（修复 layout_marginBottom） -->
     <LinearLayout
@@ -11,21 +11,21 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:layout_marginBottom="16dp"> <!-- 关键修复：marginBottom → layout_marginBottom -->
+        android:layout_marginBottom="@dimen/margin_xlarge"> <!-- 关键修复：marginBottom → layout_marginBottom -->
 
         <Button
             android:id="@+id/btn_transaction_history"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="交易记录"
-            android:layout_marginEnd="16dp"/>
+            android:layout_marginEnd="@dimen/margin_xlarge"/>
 
         <Button
             android:id="@+id/btn_cheat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="金手指"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="@dimen/margin_xlarge"
             android:backgroundTint="#FFD700"/>
 
         <LinearLayout
@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="当前哈夫币："
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_normal"
                 android:textStyle="bold" />
 
             <TextView
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:text="1000.0k"
                 android:textColor="#00AA00"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_normal"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
@@ -57,7 +57,8 @@
     <!-- 市场列表和仓库列表（无其他错误） -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="horizontal"
         android:weightSum="2">
 
@@ -67,15 +68,15 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:paddingRight="8dp">
+            android:paddingRight="@dimen/padding_medium">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="市场商品"
-                android:textSize="18sp"
+                android:textSize="@dimen/text_size_large"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="@dimen/margin_medium"/>
 
             <!-- 搜索框 -->
             <EditText
@@ -83,15 +84,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="搜索物品名称或品类（如：AP、7.62x39）"
-                android:padding="8dp"
-                android:textSize="14sp"
+                android:padding="@dimen/padding_medium"
+                android:textSize="@dimen/text_size_medium"
                 android:background="@android:drawable/edit_text"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="@dimen/margin_medium"/>
 
             <ListView
                 android:id="@+id/lv_market"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="0dp"
+                android:layout_weight="1" />
         </LinearLayout>
 
         <!-- 仓库列表 -->
@@ -100,19 +102,20 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:paddingLeft="8dp">
+            android:paddingLeft="@dimen/padding_medium">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="我的仓库"
-                android:textSize="18sp"
+                android:textSize="@dimen/text_size_large"
                 android:textStyle="bold" />
 
             <ListView
                 android:id="@+id/lv_warehouse"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="0dp"
+                android:layout_weight="1" />
         </LinearLayout>
 
     </LinearLayout>

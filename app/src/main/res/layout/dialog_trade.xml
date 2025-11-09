@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="@dimen/padding_xlarge">
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:layout_marginBottom="15dp"/>
+        android:textSize="@dimen/text_size_large"
+        android:layout_marginBottom="@dimen/margin_large"/>
 
     <!-- 关键修复：将 inputType 从 numberPositive 改为 number -->
     <EditText
@@ -20,32 +20,32 @@
         android:hint="请输入数量"
         android:inputType="number"
         android:maxLines="1"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="@dimen/margin_medium"/>
 
     <!-- 显示单价 -->
     <TextView
         android:id="@+id/tv_unit_price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
+        android:textSize="@dimen/text_size_medium"
         android:textColor="@android:color/darker_gray"
-        android:layout_marginBottom="5dp"/>
+        android:layout_marginBottom="@dimen/margin_small"/>
 
     <!-- 显示总价 -->
     <TextView
         android:id="@+id/tv_total_price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:textSize="@dimen/text_size_normal"
         android:textStyle="bold"
-        android:layout_marginBottom="5dp"/>
+        android:layout_marginBottom="@dimen/margin_small"/>
 
     <!-- 显示余额对比（购买时）或收益（出售时） -->
     <TextView
         android:id="@+id/tv_balance_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:layout_marginTop="5dp"/>
+        android:textSize="@dimen/text_size_medium"
+        android:layout_marginTop="@dimen/margin_small"/>
 
 </LinearLayout>

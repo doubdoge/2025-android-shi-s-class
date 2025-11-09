@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp"
-    android:spacing="16dp">
+    android:padding="@dimen/padding_xlarge"
+    android:spacing="@dimen/margin_xlarge">
 
     <!-- 用户名输入框 -->
     <EditText

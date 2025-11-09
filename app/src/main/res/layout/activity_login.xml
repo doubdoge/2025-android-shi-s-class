@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="32dp"
+    android:padding="@dimen/padding_xxlarge"
     android:gravity="center">
 
     <!-- 最近登录用户区域 -->
@@ -11,9 +16,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="最近登录"
-        android:textSize="14sp"
+        android:textSize="@dimen/text_size_medium"
         android:textStyle="bold"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/margin_medium"
         android:visibility="gone"
         android:id="@+id/tv_recent_users_label"/>
 
@@ -22,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/margin_xlarge"
         android:visibility="gone"/>
 
     <EditText
@@ -31,7 +36,7 @@
         android:layout_height="wrap_content"
         android:hint="请输入用户名"
         android:inputType="text"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="@dimen/margin_xlarge"/>
 
     <EditText
         android:id="@+id/et_password"
@@ -39,7 +44,7 @@
         android:layout_height="wrap_content"
         android:hint="请输入密码"
         android:inputType="textPassword"
-        android:layout_marginBottom="24dp"/>
+        android:layout_marginBottom="@dimen/margin_xxlarge"/>
 
     <!-- 登录按钮 -->
     <Button
@@ -47,8 +52,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="登录"
-        android:textSize="16sp"
-        android:layout_marginBottom="12dp"/>
+        android:textSize="@dimen/text_size_normal"
+        android:layout_marginBottom="@dimen/margin_large"/>
 
     <!-- 新增：注册按钮 -->
     <Button
@@ -56,6 +61,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="注册账号"
-        android:textSize="16sp"/>
+        android:textSize="@dimen/text_size_normal"/>
 
 </LinearLayout>
+
+</ScrollView>

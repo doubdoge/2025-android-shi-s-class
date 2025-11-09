@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- xhdpi (320dpi) 尺寸 -->
+    <dimen name="padding_small">10dp</dimen>
+    <dimen name="padding_medium">14dp</dimen>
+    <dimen name="padding_large">12dp</dimen>
+    <dimen name="padding_xlarge">16dp</dimen>
+    <dimen name="padding_xxlarge">18dp</dimen>
+    
+    <dimen name="text_size_small">13sp</dimen>
+    <dimen name="text_size_medium">15sp</dimen>
+    <dimen name="text_size_normal">17sp</dimen>
+    <dimen name="text_size_large">19sp</dimen>
+    
+    <dimen name="button_width">85dp</dimen>
+    <dimen name="button_height">38dp</dimen>
+    <dimen name="button_height_small">34dp</dimen>
+    
+    <dimen name="margin_small">5dp</dimen>
+    <dimen name="margin_medium">10dp</dimen>
+    <dimen name="margin_large">14dp</dimen>
+    <dimen name="margin_xlarge">12dp</dimen>
+    <dimen name="margin_xxlarge">16dp</dimen>
+    
+    <dimen name="item_padding">14dp</dimen>
+    <dimen name="item_margin_bottom">10dp</dimen>
+</resources>
+
