@@ -22,6 +22,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // 隐藏ActionBar，移除"delta force demo"标题
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+        
         setContentView(R.layout.activity_login);
 
         // 初始化账号管理工具
