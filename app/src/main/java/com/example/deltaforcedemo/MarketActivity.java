@@ -105,6 +105,50 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
         marketItems.add(new MarketItem("7.62x39mm PS", 506, 2000, "7.62x39mm"));
         marketItems.add(new MarketItem("7.62x39mm T45M", 111, 1200, "7.62x39mm"));
         marketItems.add(new MarketItem("7.62x39mm LP", 43, 500, "7.62x39mm"));
+        marketItems.add(new MarketItem("12.7x55mm PS12B", 6043, 1000, "12.7x55mm "));
+        marketItems.add(new MarketItem("12.7x55mm  PD12双头弹", 2967, 800, "12.7x55mm "));
+        marketItems.add(new MarketItem("12.7x55mm  PS12", 2537, 2000, "12.7x55mm "));
+        marketItems.add(new MarketItem("12.7x55mm  PS12A", 111, 1200, "12.7x55mm "));
+
+        marketItems.add(new MarketItem("5.45x39mm BS", 4309, 500, "5.45x39mm"));
+        marketItems.add(new MarketItem("5.45x39mm BT", 1441, 1000, "5.45x39mm"));
+        marketItems.add(new MarketItem("5.45x39mm PS", 549, 800, "5.45x39mm"));
+        marketItems.add(new MarketItem("5.45x39mm T", 100, 2000, "5.45x39mm"));
+        marketItems.add(new MarketItem("5.45x39mm PRS", 40, 1200, "5.45x39mm"));
+
+        marketItems.add(new MarketItem("5.56x45mm M995", 4277, 500, "5.56x45mm"));
+        marketItems.add(new MarketItem("5.56x45mm M855A1", 1581, 1000, "5.56x45mm"));
+        marketItems.add(new MarketItem("5.56x45mm M855", 526, 800, "5.56x45mm"));
+        marketItems.add(new MarketItem("5.56x45mm FMJ", 79, 2000, "5.56x45mm"));
+        marketItems.add(new MarketItem("5.56x45mm RRLP", 35, 1200, "5.56x45mm"));
+
+        marketItems.add(new MarketItem("5.8x42mm DVC12", 4655, 500, "5.8x42mm"));
+        marketItems.add(new MarketItem("5.8x42mm DBP10", 1778, 1000, "5.8x42mm"));
+        marketItems.add(new MarketItem("5.8x42mm DVP88", 358, 800, "5.8x42mm"));
+        marketItems.add(new MarketItem("5.8x42mm DBP87", 94, 2000, "5.8x42mm"));
+
+        marketItems.add(new MarketItem("6.8x51mm Hybrid", 4789, 1200, "6.8x51mm"));
+        marketItems.add(new MarketItem("6.8x51mm FMJ", 1709, 500, "6.8x51mm"));
+
+        marketItems.add(new MarketItem("7.62x51mm M62", 111, 1200, "7.62x51mm"));
+        marketItems.add(new MarketItem("7.62x51mm M80", 43, 500, "7.62x51mm"));
+        marketItems.add(new MarketItem("7.62x51mm BPZ", 111, 1200, "7.62x51mm"));
+        marketItems.add(new MarketItem("7.62x51mm Ultra Nosler", 119, 500, "7.62x51mm"));
+
+        marketItems.add(new MarketItem("7.62x54mm BT", 4294, 1200, "7.62x54mm"));
+        marketItems.add(new MarketItem("7.62x54mm LPS", 1730, 500, "7.62x54mm"));
+        marketItems.add(new MarketItem("7.62x54mm T46M", 602, 1200, "7.62x54mm"));
+
+        marketItems.add(new MarketItem("9x39mm BP", 4614, 1200, "9x39mm"));
+        marketItems.add(new MarketItem("9x39mm SP6", 1801, 500, "9x39mm"));
+        marketItems.add(new MarketItem("9x39mm SP5", 524, 1200, "9x39mm"));
+        marketItems.add(new MarketItem("45-70Govt FTX", 6215, 1200, "45-70Govt"));
+        marketItems.add(new MarketItem("45-70Govt  FMJ", 2123, 500, "45-70Govt"));
+        marketItems.add(new MarketItem("45-70Govt  RN", 1004, 1200, "45-70Govt"));
+
+
+
+
     }
 
     private void startPriceTimer() {
