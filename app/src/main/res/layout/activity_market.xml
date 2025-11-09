@@ -74,7 +74,19 @@
                 android:layout_height="wrap_content"
                 android:text="市场商品"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- 搜索框 -->
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="搜索物品名称或品类（如：AP、7.62x39）"
+                android:padding="8dp"
+                android:textSize="14sp"
+                android:background="@android:drawable/edit_text"
+                android:layout_marginBottom="8dp"/>
 
             <ListView
                 android:id="@+id/lv_market"

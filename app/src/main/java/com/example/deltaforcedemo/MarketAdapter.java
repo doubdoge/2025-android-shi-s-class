@@ -14,7 +14,7 @@ import java.util.List;
 
 public class MarketAdapter extends BaseAdapter {
     private final Context context;
-    private final List<MarketItem> marketItems;
+    private List<MarketItem> marketItems;
     private final OnTradeListener tradeListener;
 
     public interface OnTradeListener {
@@ -25,6 +25,14 @@ public class MarketAdapter extends BaseAdapter {
         this.context = context;
         this.marketItems = items;
         this.tradeListener = listener;
+    }
+
+    /**
+     * 更新数据列表
+     */
+    public void updateData(List<MarketItem> newItems) {
+        this.marketItems = newItems;
+        notifyDataSetChanged();
     }
 
     @Override

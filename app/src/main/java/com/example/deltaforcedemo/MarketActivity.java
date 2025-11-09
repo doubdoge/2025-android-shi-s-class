@@ -14,19 +14,20 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import android.content.SharedPreferences;
-import java.lang.ref.WeakReference;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import android.content.SharedPreferences;
+import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
 
 public class MarketActivity extends AppCompatActivity implements MarketAdapter.OnTradeListener, WarehouseAdapter.OnSellListener {
-    private List<MarketItem> marketItems = new ArrayList<>();
+    private List<MarketItem> marketItems = new ArrayList<>(); // 所有物品（完整列表）
+    private List<MarketItem> filteredMarketItems = new ArrayList<>(); // 过滤后的物品列表
     private MarketAdapter marketAdapter;
     private WarehouseAdapter warehouseAdapter;
     private WarehouseManager warehouseManager;
@@ -36,6 +37,7 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
     private TextView hafBalanceTv;
     private HafCurrencyManager currencyManager;
     private String currentUsername;
+    private EditText searchEditText;
     private static final String PREF_MARKET = "MarketData";
     private static final String KEY_LAST_RESET_DATE = "last_reset_date";
 
@@ -58,6 +60,8 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
                     item.fluctuatePrice();
                     item.fluctuateSupply(); // 同时波动库存
                 }
+                // 更新过滤后的列表
+                activity.filterMarketItems(activity.getSearchQuery());
                 activity.marketAdapter.notifyDataSetChanged();
             }
         }
@@ -91,12 +95,19 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
         myHandler = new MyHandler(this);
         initMarketData();
 
+        // 初始化过滤列表（开始时显示所有物品）
+        filteredMarketItems = new ArrayList<>(marketItems);
+
         ListView marketListView = findViewById(R.id.lv_market);
         ListView warehouseListView = findViewById(R.id.lv_warehouse);
-        marketAdapter = new MarketAdapter(this, marketItems, this);
+        searchEditText = findViewById(R.id.et_search);
+        marketAdapter = new MarketAdapter(this, filteredMarketItems, this);
         warehouseAdapter = new WarehouseAdapter(this, warehouseManager.getWarehouseItems(), marketItems, this);
         marketListView.setAdapter(marketAdapter);
         warehouseListView.setAdapter(warehouseAdapter);
+
+        // 设置搜索功能
+        setupSearchFunction();
 
         // 交易记录按钮
         findViewById(R.id.btn_transaction_history).setOnClickListener(v -> {
@@ -223,7 +234,8 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
                 for (MarketItem item : marketItems) {
                     item.resetToInitial();
                 }
-                marketAdapter.notifyDataSetChanged();
+                // 更新过滤列表
+                filterMarketItems(getSearchQuery());
                 showToast("市场数据已重置为初始值（每日0点重置）");
             });
             
@@ -405,6 +417,64 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 设置搜索功能
+     */
+    private void setupSearchFunction() {
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String query = s.toString().trim();
+                filterMarketItems(query);
+            }
+        });
+    }
+
+    /**
+     * 获取当前搜索关键词
+     */
+    private String getSearchQuery() {
+        if (searchEditText != null) {
+            return searchEditText.getText().toString().trim();
+        }
+        return "";
+    }
+
+    /**
+     * 过滤市场物品
+     * @param query 搜索关键词
+     */
+    private void filterMarketItems(String query) {
+        if (query.isEmpty()) {
+            // 如果搜索框为空，显示所有物品
+            filteredMarketItems.clear();
+            filteredMarketItems.addAll(marketItems);
+        } else {
+            // 过滤物品：搜索名称和类型
+            filteredMarketItems.clear();
+            String lowerQuery = query.toLowerCase();
+            
+            for (MarketItem item : marketItems) {
+                String itemName = item.getName().toLowerCase();
+                String itemType = item.getType().toLowerCase();
+                
+                // 检查名称或类型是否包含搜索关键词
+                if (itemName.contains(lowerQuery) || itemType.contains(lowerQuery)) {
+                    filteredMarketItems.add(item);
+                }
+            }
+        }
+        
+        // 更新适配器数据
+        marketAdapter.updateData(filteredMarketItems);
     }
 
     @Override
