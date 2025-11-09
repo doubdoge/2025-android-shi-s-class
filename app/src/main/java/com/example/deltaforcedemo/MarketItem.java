@@ -7,6 +7,7 @@ import java.util.Random;
 public class MarketItem {
     private String name;
     private BigDecimal currentPrice;
+    private BigDecimal initialPrice; // 初始价格值
     private int totalSupply;
     private int initialSupply; // 初始库存值
     private String type;
@@ -15,7 +16,8 @@ public class MarketItem {
 
     public MarketItem(String name, int initialPrice, int totalSupply, String type) {
         this.name = name;
-        this.currentPrice = BigDecimal.valueOf(initialPrice).setScale(2, RoundingMode.HALF_UP);
+        this.initialPrice = BigDecimal.valueOf(initialPrice).setScale(2, RoundingMode.HALF_UP);
+        this.currentPrice = this.initialPrice; // 初始时当前价格等于初始价格
         this.totalSupply = totalSupply;
         this.initialSupply = totalSupply; // 保存初始库存值
         this.type = type;
@@ -103,6 +105,22 @@ public class MarketItem {
      */
     public int getInitialSupply() {
         return initialSupply;
+    }
+
+    /**
+     * 获取初始价格值
+     */
+    public BigDecimal getInitialPrice() {
+        return initialPrice;
+    }
+
+    /**
+     * 重置为初始值（价格和库存都恢复到初始值）
+     */
+    public void resetToInitial() {
+        this.currentPrice = this.initialPrice;
+        this.totalSupply = this.initialSupply;
+        this.changeRate = 0.0;
     }
 
     public String getType() {

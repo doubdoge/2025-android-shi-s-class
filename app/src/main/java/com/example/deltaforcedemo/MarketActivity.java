@@ -16,9 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import android.content.SharedPreferences;
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,6 +36,8 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
     private TextView hafBalanceTv;
     private HafCurrencyManager currencyManager;
     private String currentUsername;
+    private static final String PREF_MARKET = "MarketData";
+    private static final String KEY_LAST_RESET_DATE = "last_reset_date";
 
     private static class MyHandler extends Handler {
         private final WeakReference<MarketActivity> activityRef;
@@ -46,6 +50,10 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
             MarketActivity activity = activityRef.get();
             if (activity == null) return;
             if (msg.what == 1) {
+                // 检查是否需要重置（每天0点重置）
+                activity.checkAndResetMarketIfNeeded();
+                
+                // 价格和库存波动
                 for (MarketItem item : activity.marketItems) {
                     item.fluctuatePrice();
                     item.fluctuateSupply(); // 同时波动库存
@@ -171,6 +179,60 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
                 myHandler.sendEmptyMessage(1);
             }
         }, 0, 8000);
+        
+        // 启动时检查一次是否需要重置
+        checkAndResetMarketIfNeeded();
+    }
+    
+    /**
+     * 检查并重置市场数据（如果到了新的一天）
+     * 每天0点时重置，如果应用在0点之后启动，也会在启动时检测并重置
+     */
+    private void checkAndResetMarketIfNeeded() {
+        Calendar calendar = Calendar.getInstance();
+        int currentDay = calendar.get(Calendar.DAY_OF_YEAR);
+        int currentYear = calendar.get(Calendar.YEAR);
+        
+        // 获取上次重置的日期
+        SharedPreferences sp = getSharedPreferences(PREF_MARKET, MODE_PRIVATE);
+        int lastResetDay = sp.getInt(KEY_LAST_RESET_DATE + "_day", -1);
+        int lastResetYear = sp.getInt(KEY_LAST_RESET_DATE + "_year", -1);
+        
+        boolean shouldReset = false;
+        
+        if (lastResetDay == -1 || lastResetYear == -1) {
+            // 第一次运行，记录当前日期，不重置
+            sp.edit()
+                    .putInt(KEY_LAST_RESET_DATE + "_day", currentDay)
+                    .putInt(KEY_LAST_RESET_DATE + "_year", currentYear)
+                    .apply();
+        } else {
+            // 检查是否到了新的一天（日期变化）
+            boolean isNewDay = (currentYear > lastResetYear) || 
+                              (currentYear == lastResetYear && currentDay > lastResetDay);
+            
+            // 如果日期变化了，说明已经过了0点，需要重置
+            if (isNewDay) {
+                shouldReset = true;
+            }
+        }
+        
+        if (shouldReset) {
+            // 重置所有物品到初始值
+            runOnUiThread(() -> {
+                for (MarketItem item : marketItems) {
+                    item.resetToInitial();
+                }
+                marketAdapter.notifyDataSetChanged();
+                showToast("市场数据已重置为初始值（每日0点重置）");
+            });
+            
+            // 更新上次重置日期
+            sp.edit()
+                    .putInt(KEY_LAST_RESET_DATE + "_day", currentDay)
+                    .putInt(KEY_LAST_RESET_DATE + "_year", currentYear)
+                    .apply();
+        }
     }
 
     @Override
