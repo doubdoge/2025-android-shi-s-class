@@ -29,6 +29,13 @@
             android:screenOrientation="landscape">
         </activity>
 
+        <!-- 交易记录页面 -->
+        <activity
+            android:name=".TransactionHistoryActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+        </activity>
+
     </application>
 
 </manifest>

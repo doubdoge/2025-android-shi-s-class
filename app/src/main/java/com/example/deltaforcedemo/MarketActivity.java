@@ -25,6 +25,7 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
     private MarketAdapter marketAdapter;
     private WarehouseAdapter warehouseAdapter;
     private WarehouseManager warehouseManager;
+    private TransactionManager transactionManager;
     private Timer priceTimer;
     private MyHandler myHandler;
     private TextView hafBalanceTv;
@@ -67,8 +68,11 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
 
         // 2. 初始化仓库（绑定当前用户）
         warehouseManager = WarehouseManager.getInstance(this, currentUsername);
+        
+        // 3. 初始化交易记录管理器（绑定当前用户）
+        transactionManager = TransactionManager.getInstance(this, currentUsername);
 
-        // 3. 初始化UI（加载已保存的货币余额）
+        // 4. 初始化UI（加载已保存的货币余额）
         hafBalanceTv = findViewById(R.id.tv_haf_balance);
         updateHafBalanceDisplay();
 
@@ -81,6 +85,12 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
         warehouseAdapter = new WarehouseAdapter(this, warehouseManager.getWarehouseItems());
         marketListView.setAdapter(marketAdapter);
         warehouseListView.setAdapter(warehouseAdapter);
+
+        // 交易记录按钮
+        findViewById(R.id.btn_transaction_history).setOnClickListener(v -> {
+            Intent intent = new Intent(MarketActivity.this, TransactionHistoryActivity.class);
+            startActivity(intent);
+        });
 
         startPriceTimer();
     }
@@ -161,6 +171,16 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
             }
 
             if (success) {
+                // 记录交易
+                TransactionRecord record = new TransactionRecord(
+                    item.getName(),
+                    isBuy,
+                    quantity,
+                    amount,
+                    item.getCurrentPrice()
+                );
+                transactionManager.addTransaction(record);
+                
                 marketAdapter.notifyDataSetChanged();
                 warehouseAdapter.updateData(warehouseManager.getWarehouseItems());
                 updateHafBalanceDisplay();
