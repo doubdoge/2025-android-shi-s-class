@@ -45,6 +45,7 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
             if (msg.what == 1) {
                 for (MarketItem item : activity.marketItems) {
                     item.fluctuatePrice();
+                    item.fluctuateSupply(); // 同时波动库存
                 }
                 activity.marketAdapter.notifyDataSetChanged();
             }
