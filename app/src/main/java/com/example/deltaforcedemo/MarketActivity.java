@@ -96,6 +96,14 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
             startActivity(intent);
         });
 
+        // 金手指按钮 - 无条件获得100万货币
+        findViewById(R.id.btn_cheat).setOnClickListener(v -> {
+            BigDecimal cheatAmount = new BigDecimal("1000000");
+            currencyManager.addBalance(cheatAmount);
+            updateHafBalanceDisplay();
+            showToast("金手指激活！获得 1000000 哈夫币");
+        });
+
         startPriceTimer();
     }
 
