@@ -70,6 +70,12 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // 隐藏ActionBar，移除"delta force demo"标题
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+        
         setContentView(R.layout.activity_market);
 
         // 1. 先校验登录状态（未登录直接跳转）
