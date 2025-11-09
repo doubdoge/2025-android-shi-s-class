@@ -455,7 +455,7 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
     }
 
     /**
-     * 过滤市场物品
+     * 过滤市场物品（简单搜索：只检查名称和类型是否包含搜索关键词）
      * @param query 搜索关键词
      */
     private void filterMarketItems(String query) {

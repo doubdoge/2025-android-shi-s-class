@@ -75,4 +75,75 @@ public class UserAccountManager {
         List<String> userList = gson.fromJson(userListJson, new TypeToken<List<String>>() {}.getType());
         return userList.contains(username);
     }
+
+    /**
+     * 最近登录用户管理
+     */
+    private static final String KEY_RECENT_USERS = "recent_users";
+    private static final int MAX_RECENT_USERS = 3;
+
+    /**
+     * 保存最近登录用户（最多3个）
+     */
+    public void saveRecentUser(String username, String password) {
+        List<RecentUser> recentUsers = getRecentUsers();
+        
+        // 移除已存在的相同用户名（如果存在）
+        recentUsers.removeIf(user -> user.getUsername().equals(username));
+        
+        // 添加到列表开头
+        recentUsers.add(0, new RecentUser(username, password));
+        
+        // 保持最多3个
+        while (recentUsers.size() > MAX_RECENT_USERS) {
+            recentUsers.remove(recentUsers.size() - 1);
+        }
+        
+        // 保存到SharedPreferences
+        String json = gson.toJson(recentUsers);
+        sp.edit().putString(KEY_RECENT_USERS, json).apply();
+    }
+
+    /**
+     * 获取最近登录用户列表（最多3个）
+     */
+    public List<RecentUser> getRecentUsers() {
+        String json = sp.getString(KEY_RECENT_USERS, "[]");
+        List<RecentUser> users = gson.fromJson(json, new TypeToken<List<RecentUser>>() {}.getType());
+        if (users == null) {
+            users = new ArrayList<>();
+        }
+        return users;
+    }
+
+    /**
+     * 最近登录用户数据类
+     */
+    public static class RecentUser {
+        private String username;
+        private String password;
+
+        public RecentUser() {}
+
+        public RecentUser(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
 }
