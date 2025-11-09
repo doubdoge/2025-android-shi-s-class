@@ -7,12 +7,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -177,8 +180,16 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
         View view = getLayoutInflater().inflate(R.layout.dialog_trade, null);
         builder.setView(view);
         EditText quantityEt = view.findViewById(R.id.et_quantity);
+        TextView unitPriceTv = view.findViewById(R.id.tv_unit_price);
+        TextView totalPriceTv = view.findViewById(R.id.tv_total_price);
+        TextView balanceInfoTv = view.findViewById(R.id.tv_balance_info);
+        
         String title = isBuy ? "购买 " + item.getName() : "出售 " + item.getName();
         builder.setTitle(title);
+        
+        // 显示单价
+        BigDecimal unitPrice = item.getCurrentPrice();
+        unitPriceTv.setText("单价: " + unitPrice + " 元");
         
         // 如果是出售，显示最大可出售数量提示
         TextView titleTv = view.findViewById(R.id.tv_title);
@@ -193,6 +204,71 @@ public class MarketActivity extends AppCompatActivity implements MarketAdapter.O
                 titleTv.setVisibility(View.GONE);
             }
         }
+        
+        // 获取当前余额
+        BigDecimal currentBalance = currencyManager.getBalance();
+        
+        // 添加文本监听器，实时计算价格
+        quantityEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            
+            @Override
+            public void afterTextChanged(Editable s) {
+                String input = s.toString().trim();
+                if (input.isEmpty() || input.equals("0")) {
+                    totalPriceTv.setText("总价: 0 元");
+                    balanceInfoTv.setText("");
+                    return;
+                }
+                
+                try {
+                    int quantity = Integer.parseInt(input);
+                    if (quantity <= 0) {
+                        totalPriceTv.setText("总价: 0 元");
+                        balanceInfoTv.setText("");
+                        return;
+                    }
+                    
+                    // 如果是出售，检查数量不能超过库存
+                    if (!isBuy && maxQuantity > 0 && quantity > maxQuantity) {
+                        totalPriceTv.setText("总价: " + unitPrice.multiply(new BigDecimal(quantity)) + " 元");
+                        balanceInfoTv.setText("⚠️ 出售数量超过库存！");
+                        balanceInfoTv.setTextColor(ContextCompat.getColor(MarketActivity.this, android.R.color.holo_red_dark));
+                        return;
+                    }
+                    
+                    // 计算总价
+                    BigDecimal totalPrice = unitPrice.multiply(new BigDecimal(quantity));
+                    totalPriceTv.setText("总价: " + totalPrice + " 元");
+                    
+                    // 根据购买或出售显示不同信息
+                    if (isBuy) {
+                        // 购买：显示余额对比
+                        if (currentBalance.compareTo(totalPrice) >= 0) {
+                            BigDecimal remaining = currentBalance.subtract(totalPrice);
+                            balanceInfoTv.setText("✓ 余额充足 | 当前余额: " + currentBalance + " 元 | 剩余: " + remaining + " 元");
+                            balanceInfoTv.setTextColor(ContextCompat.getColor(MarketActivity.this, android.R.color.holo_green_dark));
+                        } else {
+                            BigDecimal shortage = totalPrice.subtract(currentBalance);
+                            balanceInfoTv.setText("✗ 余额不足 | 当前余额: " + currentBalance + " 元 | 缺少: " + shortage + " 元");
+                            balanceInfoTv.setTextColor(ContextCompat.getColor(MarketActivity.this, android.R.color.holo_red_dark));
+                        }
+                    } else {
+                        // 出售：显示将获得的金额
+                        BigDecimal newBalance = currentBalance.add(totalPrice);
+                        balanceInfoTv.setText("将获得: " + totalPrice + " 元 | 余额将变为: " + newBalance + " 元");
+                        balanceInfoTv.setTextColor(ContextCompat.getColor(MarketActivity.this, android.R.color.holo_green_dark));
+                    }
+                } catch (NumberFormatException e) {
+                    totalPriceTv.setText("总价: 0 元");
+                    balanceInfoTv.setText("");
+                }
+            }
+        });
 
         builder.setPositiveButton("确认", (dialog, which) -> {
             String input = quantityEt.getText().toString().trim();

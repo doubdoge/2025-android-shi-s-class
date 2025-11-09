@@ -19,6 +19,33 @@
         android:layout_height="wrap_content"
         android:hint="请输入数量"
         android:inputType="number"
-        android:maxLines="1"/>
+        android:maxLines="1"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- 显示单价 -->
+    <TextView
+        android:id="@+id/tv_unit_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginBottom="5dp"/>
+
+    <!-- 显示总价 -->
+    <TextView
+        android:id="@+id/tv_total_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="5dp"/>
+
+    <!-- 显示余额对比（购买时）或收益（出售时） -->
+    <TextView
+        android:id="@+id/tv_balance_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginTop="5dp"/>
 
 </LinearLayout>
