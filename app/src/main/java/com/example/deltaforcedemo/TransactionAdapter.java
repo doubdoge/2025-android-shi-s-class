@@ -74,10 +74,10 @@ public class TransactionAdapter extends BaseAdapter {
             holder.transactionTypeTv.setTextColor(Color.parseColor("#F44336")); // 红色
         }
         
-        holder.quantityTv.setText("数量: " + record.getQuantity());
-        holder.unitPriceTv.setText("单价: " + record.getUnitPrice() + " 哈夫币");
-        holder.totalAmountTv.setText("总金额: " + record.getTotalAmount() + " 哈夫币");
-        holder.timeTv.setText("时间: " + dateFormat.format(new Date(record.getTimestamp())));
+        holder.quantityTv.setText(String.valueOf(record.getQuantity()));
+        holder.unitPriceTv.setText(record.getUnitPrice() + " 哈夫币");
+        holder.totalAmountTv.setText(record.getTotalAmount() + " 哈夫币");
+        holder.timeTv.setText(dateFormat.format(new Date(record.getTimestamp())));
 
         return convertView;
     }
