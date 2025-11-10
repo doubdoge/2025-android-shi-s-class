@@ -1,4 +1,4 @@
-# 弹药市场模拟应用 (Delta Force Demo)
+# 弹股通 (Delta Force Demo)
 
 弹股通——基于Android平台的模拟弹药市场应用，支持用户进行弹药类物品的买卖交易、仓库管理及交易记录查询等功能。
 
@@ -38,7 +38,7 @@
 
 1. 克隆代码库到本地：
    ```bash
-   git clone https://github.com/your-username/2025-android-shi-s-class.git
+   git clone https://github.com/doubdoge/2025-android-shi-s-class.git
    ```
 
 2. 使用Android Studio打开项目
@@ -49,7 +49,3 @@
 
 ## 许可证
 本项目遵循**GNU General Public License v3.0**开源协议，详情请查看[LICENSE](LICENSE)文件。
-
-## 联系方式
-
-如需问题反馈或合作洽谈，请联系：[your-email@example.com]
